@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verificação de Benefício</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #1a7a4a;
+    --green-light: #e8f5ee;
+    --green-mid: #2da865;
+    --red: #c0392b;
+    --yellow: #f39c12;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+    --surface: #ffffff;
+    --bg: #f4f9f6;
+    --border: #d1e8db;
+    --radius: 16px;
+    --shadow-md: 0 4px 24px rgba(0,0,0,0.10);
+    --shadow-lg: 0 8px 40px rgba(0,0,0,0.14);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    width: 100%;
+    background: var(--green);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .header-badge {
+    background: #fff;
+    color: var(--green);
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 99px;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+  }
+  .header-text {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+
+  .wrapper {
+    width: 100%;
+    max-width: 480px;
+    padding: 16px 16px 40px;
+  }
+
+  /* ── PROGRESS ── */
+  .progress-wrap {
+    padding: 18px 20px 0;
+    background: var(--surface);
+  }
+  .progress-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .progress-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--green);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+  .progress-count {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .progress-bar-bg {
+    height: 8px;
+    background: var(--green-light);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green-mid), var(--green));
+    border-radius: 99px;
+    transition: width .5s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* ── QUESTION BLOCK ── */
+  .question-block {
+    padding: 20px 20px 0;
+    display: none;
+  }
+  .question-block.active {
+    display: block;
+    animation: fadeUp .35s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .step-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--green-light);
+    color: var(--green);
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 99px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+  .step-chip span { font-size: 14px; }
+
+  .question-text {
+    font-size: clamp(17px, 4.5vw, 21px);
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.35;
+    margin-bottom: 6px;
+  }
+  .question-sub {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  /* ── OPTIONS ── */
+  .options { display: flex; flex-direction: column; gap: 10px; padding-bottom: 24px; }
+
+  .option-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all .2s;
+    text-align: left;
+    width: 100%;
+  }
+  .option-btn:active { transform: scale(.98); }
+  .option-btn:hover { border-color: var(--green-mid); background: var(--green-light); }
+
+  .option-icon {
+    font-size: 26px;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  .option-label {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .option-sub {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  /* ── RESULT ── */
+  .result-block {
+    display: none;
+    padding: 24px 20px 30px;
+    animation: fadeUp .4s ease;
+  }
+  .result-block.active { display: block; }
+
+  .result-icon-wrap {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    margin: 0 auto 16px;
+  }
+  .result-icon-wrap.yes { background: var(--green-light); }
+  .result-icon-wrap.maybe { background: #fff3cd; }
+
+  .result-title {
+    font-size: clamp(20px, 5vw, 26px);
+    font-weight: 900;
+    color: var(--text);
+    text-align: center;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  .result-title strong { color: var(--green); }
+
+  .result-desc {
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.6;
+    margin-bottom: 22px;
+  }
+
+  /* checklist */
+  .checklist {
+    background: var(--green-light);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 22px;
+  }
+  .checklist-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--green);
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    margin-bottom: 10px;
+  }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .check-item:last-child { margin-bottom: 0; }
+  .check-icon { color: var(--green); font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* urgency bar */
+  .urgency-bar {
+    background: #fff3cd;
+    border-left: 4px solid var(--yellow);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 22px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #7d5a00;
+    line-height: 1.5;
+  }
+
+  /* CTA */
+  .cta-btn {
+    display: block;
+    width: 100%;
+    background: linear-gradient(135deg, #1db954, var(--green));
+    color: #fff;
+    font-family: 'Nunito', sans-serif;
+    font-size: 17px;
+    font-weight: 900;
+    padding: 18px 20px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 6px 20px rgba(26,122,74,.35);
+    transition: transform .15s, box-shadow .15s;
+    letter-spacing: .3px;
+    line-height: 1.3;
+  }
+  .cta-btn:active { transform: scale(.98); box-shadow: 0 3px 10px rgba(26,122,74,.3); }
+
+  .cta-sub {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-top: 10px;
+  }
+
+  /* trust strip */
+  .trust-strip {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+  }
+  .trust-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .trust-item span { font-size: 14px; }
+
+  /* ── DISQUALIFIED ── */
+  .disq-block {
+    display: none;
+    padding: 24px 20px 30px;
+    animation: fadeUp .4s ease;
+    text-align: center;
+  }
+  .disq-block.active { display: block; }
+  .disq-icon-wrap {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: #fef3f2;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; margin: 0 auto 16px;
+  }
+  .disq-title {
+    font-size: clamp(18px, 4.5vw, 22px);
+    font-weight: 900; color: var(--text);
+    line-height: 1.3; margin-bottom: 10px;
+  }
+  .disq-desc {
+    font-size: 14px; color: var(--muted);
+    font-weight: 600; line-height: 1.6; margin-bottom: 22px;
+  }
+  .disq-divider {
+    border: none; border-top: 2px dashed var(--border);
+    margin: 0 0 20px;
+  }
+  .disq-share-title {
+    font-size: 15px; font-weight: 800; color: var(--text);
+    margin-bottom: 6px;
+  }
+  .disq-share-sub {
+    font-size: 13px; color: var(--muted); font-weight: 600;
+    margin-bottom: 18px; line-height: 1.5;
+  }
+  .whatsapp-btn {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    width: 100%;
+    background: #25D366;
+    color: #fff;
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px; font-weight: 900;
+    padding: 16px 20px;
+    border: none; border-radius: 12px;
+    cursor: pointer; text-decoration: none;
+    box-shadow: 0 6px 20px rgba(37,211,102,.35);
+    transition: transform .15s;
+  }
+  .whatsapp-btn:active { transform: scale(.98); }
+  .whatsapp-icon { font-size: 22px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">Verificação</div>
+  <div class="header-text">Descubra se você tem direito ao benefício</div>
+</div>
+
+<div class="wrapper">
+<div class="card">
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-top">
+      <span class="progress-label">Sua análise</span>
+      <span class="progress-count" id="progressCount">Pergunta 1 de 5</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressFill" style="width:20%"></div>
+    </div>
+  </div>
+
+  <!-- Q1 -->
+  <div class="question-block active" id="q1">
+    <div class="step-chip"><span>✦</span> Passo 1</div>
+    <div class="question-text">Você ou alguém da sua família tem algum problema de saúde mental?</div>
+    <div class="question-sub">Isso inclui depressão, ansiedade, esquizofrenia, bipolar ou qualquer outro diagnóstico.</div>
+    <div class="options">
+      <button class="option-btn" onclick="next(1, 'sim')">
+        <span class="option-icon">✅</span>
+        <div>
+          <div class="option-label">Sim, tenho diagnóstico</div>
+          <div class="option-sub">Já fui no médico e tenho ou posso ter um laudo</div>
+        </div>
+      </button>
+      <button class="option-btn" onclick="next(1, 'suspeita')">
+        <span class="option-icon">🤔</span>
+        <div>
+          <div class="option-label">Acho que tenho, mas nunca fui diagnosticado</div>
+          <div class="option-sub">Tenho sintomas mas ainda não procurei ajuda médica</div>
+        </div>
+      </button>
+      <button class="option-btn" onclick="next(1, 'familiar')">
+        <span class="option-icon">👨‍👩‍👧</span>
+        <div>
+          <div class="option-label">É para um familiar meu</div>
+          <div class="option-sub">Quero ajudar alguém da minha família a conseguir o benefício</div>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="question-block" id="q2">
+    <div class="step-chip"><span>✦</span> Passo 2</div>
+    <div class="question-text">Você faz acompanhamento em algum posto de saúde, CAPS ou médico do SUS?</div>
+    <div class="question-sub">Não precisa ser seguido — qualquer consulta conta.</div>
+    <div class="options">
+      <button class="option-btn" onclick="next(2, 'sim')">
+        <span class="option-icon">🏥</span>
+        <div>
+          <div class="option-label">Sim, já fui pelo menos uma vez</div>
+          <div class="option-sub">Tenho ou posso pegar documentos desse atendimento</div>
+        </div>
+      </button>
+      <button class="option-btn" onclick="next(2, 'nao')">
+        <span class="option-icon">❌</span>
+        <div>
+          <div class="option-label">Não, nunca fui ao médico pelo SUS</div>
+          <div class="option-sub">Não tenho nenhum registro de atendimento</div>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="question-block" id="q3">
+    <div class="step-chip"><span>✦</span> Passo 3</div>
+    <div class="question-text">Qual é a renda total da sua família?</div>
+    <div class="question-sub">Some todos que moram na mesma casa — salários, bicos, bolsa família, tudo.</div>
+    <div class="options">
+      <button class="option-btn" onclick="next(3, 'baixa')">
+        <span class="option-icon">💚</span>
+        <div>
+          <div class="option-label">Menos de R$ 405 por pessoa da casa</div>
+          <div class="option-sub">Ex: família de 3 pessoas ganhando menos de R$ 1.215 no total</div>
+        </div>
+      </button>
+      <button class="option-btn" onclick="next(3, 'media')">
+        <span class="option-icon">🟡</span>
+        <div>
+          <div class="option-label">Entre R$ 405 e R$ 800 por pessoa</div>
+          <div class="option-sub">Perto do limite — pode valer a pena verificar</div>
+        </div>
+      </button>
+      <button class="option-btn" onclick="next(3, 'alta')">
+        <span class="option-icon">🔴</span>
+        <div>
+          <div class="option-label">Mais de R$ 800 por pessoa</div>
+          <div class="option-sub">A renda é mais alta</div>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="question-block" id="q4">
+    <div class="step-chip"><span>✦</span> Passo 4</div>
+    <div class="question-text">A doença limita sua capacidade de trabalhar ou cuidar de si mesmo?</div>
+    <div class="question-sub">Por exemplo: dificuldade de sair de casa, manter emprego, fazer tarefas do dia a dia.</div>
+    <div class="options">
+      <button class="option-btn" onclick="next(4, 'muito')">
+        <span class="option-icon">😔</span>
+        <div>
+          <div class="option-label">Sim, muito — quase não consigo trabalhar</div>
+          <div class="option-sub">As limitações são graves e constantes</div>
+        </div>
+      </button>
+      <button class="option-btn" onclick="next(4, 'pouco')">
+        <span class="option-icon">😐</span>
+        <div>
+          <div class="option-label">Às vezes, dependendo do dia</div>
+          <div class="option-sub">Tem períodos bons e períodos muito difíceis</div>
+        </div>
+      </button>
+      <button class="option-btn" onclick="next(4, 'nao')">
+        <span class="option-icon">🙂</span>
+        <div>
+          <div class="option-label">Não, consigo fazer as coisas normalmente</div>
+          <div class="option-sub">A doença não interfere tanto assim</div>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="question-block" id="q5">
+    <div class="step-chip"><span>✦</span> Passo 5</div>
+    <div class="question-text">Você já tentou pedir esse benefício antes?</div>
+    <div class="question-sub">Queremos entender melhor sua situação para te ajudar da forma certa.</div>
+    <div class="options">
+      <button class="option-btn" onclick="showResult()">
+        <span class="option-icon">🚫</span>
+        <div>
+          <div class="option-label">Não, nunca tentei</div>
+          <div class="option-sub">Não sabia que existia ou não sabia como fazer</div>
+        </div>
+      </button>
+      <button class="option-btn" onclick="showResult()">
+        <span class="option-icon">📋</span>
+        <div>
+          <div class="option-label">Tentei mas fui negado</div>
+          <div class="option-sub">O pedido foi recusado ou ficou parado</div>
+        </div>
+      </button>
+      <button class="option-btn" onclick="showResult()">
+        <span class="option-icon">❓</span>
+        <div>
+          <div class="option-label">Não sei como funciona direito</div>
+          <div class="option-sub">Preciso entender melhor o processo</div>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="result-block" id="result">
+    <div class="result-icon-wrap yes">🎯</div>
+    <div class="result-title">Você tem <strong>boas chances</strong> de ter direito ao benefício!</div>
+    <div class="result-desc">Com base nas suas respostas, seu perfil se encaixa nos critérios do benefício do governo para pessoas com problemas de saúde mental.</div>
+
+    <div class="checklist">
+      <div class="checklist-title">✅ O que você precisa ter:</div>
+      <div class="check-item">
+        <span class="check-icon">✔</span>
+        <span>Laudo médico ou atendimento pelo SUS comprovando a condição</span>
+      </div>
+      <div class="check-item">
+        <span class="check-icon">✔</span>
+        <span>Renda familiar de até R$ 405 por pessoa que mora na casa</span>
+      </div>
+      <div class="check-item">
+        <span class="check-icon">✔</span>
+        <span>Mostrar que a doença limita suas atividades do dia a dia</span>
+      </div>
+      <div class="check-item">
+        <span class="check-icon">✔</span>
+        <span>Documentos pessoais (RG, CPF) e comprovante de residência</span>
+      </div>
+    </div>
+
+    <div class="urgency-bar">
+      ⚠️ <strong>Atenção:</strong> Muitas pessoas perdem o benefício por errar na hora de pedir. Veja como fazer certo e não deixar dinheiro na mesa.
+    </div>
+
+    <a href="#" class="cta-btn" id="ctaBtn">
+      Ver como pedir meu benefício →
+    </a>
+    <div class="cta-sub">🔒 Gratuito e sem compromisso</div>
+
+    <div class="trust-strip">
+      <div class="trust-item"><span>🔒</span> Informação segura</div>
+      <div class="trust-item"><span>📱</span> 100% pelo celular</div>
+      <div class="trust-item"><span>✅</span> Sem burocracia</div>
+    </div>
+  </div>
+
+  <!-- DISQUALIFIED -->
+  <div class="disq-block" id="disqualified">
+    <div class="disq-icon-wrap">😕</div>
+    <div class="disq-title" id="disqTitle">Infelizmente esse benefício não se aplica ao seu caso</div>
+    <div class="disq-desc" id="disqDesc">Com base nas suas respostas, seu perfil não se encaixa nos critérios exigidos para esse benefício no momento.</div>
+
+    <hr class="disq-divider">
+
+    <div class="disq-share-title">Mas você pode ajudar alguém! 💚</div>
+    <div class="disq-share-sub">Talvez você conheça alguém que se encaixe — um familiar, vizinho ou amigo. Compartilhe esse link e ajude essa pessoa a descobrir se tem direito.</div>
+
+    <a id="whatsappShareBtn" href="#" class="whatsapp-btn" target="_blank">
+      <span class="whatsapp-icon">💬</span> Compartilhar no WhatsApp
+    </a>
+  </div>
+
+</div><!-- /card -->
+</div><!-- /wrapper -->
+
+<script>
+  const answers = {};
+  const totalSteps = 5;
+
+  function next(step, answer) {
+    answers['q' + step] = answer;
+    const current = document.getElementById('q' + step);
+    current.classList.remove('active');
+
+    const nextStep = step + 1;
+    if (nextStep <= totalSteps) {
+      const nextEl = document.getElementById('q' + nextStep);
+      nextEl.classList.add('active');
+      updateProgress(nextStep);
+    }
+  }
+
+  function updateProgress(step) {
+    const pct = Math.round((step / totalSteps) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressCount').textContent = 'Pergunta ' + step + ' de ' + totalSteps;
+  }
+
+  function showResult() {
+    document.getElementById('q5').classList.remove('active');
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('progressCount').textContent = 'Análise concluída ✓';
+
+    const rendaAlta = answers.q3 === 'alta';
+    const semLimitacao = answers.q4 === 'nao';
+
+    if (rendaAlta || semLimitacao) {
+      // Set specific message
+      if (rendaAlta) {
+        document.getElementById('disqTitle').textContent = 'Pela renda, esse benefício não se aplica ao seu caso';
+        document.getElementById('disqDesc').textContent = 'O benefício é destinado a famílias com renda de até R$ 405 por pessoa. Como a sua renda está acima desse valor, infelizmente você não se enquadra nos critérios no momento.';
+      } else {
+        document.getElementById('disqTitle').textContent = 'Esse benefício exige limitação comprovada pela doença';
+        document.getElementById('disqDesc').textContent = 'Para ter direito, é preciso que a condição de saúde limite de forma significativa sua capacidade de trabalhar ou realizar atividades do dia a dia. No seu caso, isso não parece ser um problema grave no momento.';
+      }
+
+      // Build WhatsApp share link
+      const pageUrl = encodeURIComponent(window.location.href);
+      const msg = encodeURIComponent('Você sabia que pessoas com problemas de saúde mental e baixa renda podem ter direito a um salário do governo? Faz esse teste rápido e descobre: ' + window.location.href);
+      document.getElementById('whatsappShareBtn').href = 'https://wa.me/?text=' + msg;
+
+      document.getElementById('disqualified').classList.add('active');
+    } else {
+      document.getElementById('result').classList.add('active');
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('ctaBtn').href = 'https://seusite.com.br/pagina-de-vendas';
+  }
+</script>
+
+</body>
+</html>

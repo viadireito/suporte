@@ -1,0 +1,477 @@
+
+<style>
+  :root {
+    --brand: #1D9E75;
+    --brand-light: #E1F5EE;
+    --brand-dark: #085041;
+    --warn: #BA7517;
+    --warn-light: #FAEEDA;
+    --danger: #A32D2D;
+    --danger-light: #FCEBEB;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  #quiz-root {
+    font-family: var(--font-sans);
+    max-width: 380px;
+    padding: 1.25rem 1rem 2rem;
+  }
+
+  .progress-bar-track {
+    height: 6px;
+    background: var(--color-border-tertiary);
+    border-radius: 99px;
+    margin-bottom: 0.5rem;
+  }
+  .progress-bar-fill {
+    height: 6px;
+    border-radius: 99px;
+    background: var(--brand);
+    transition: width 0.4s cubic-bezier(.4,0,.2,1);
+  }
+  .progress-label {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    margin-bottom: 1.5rem;
+  }
+
+  .step { display: none; }
+  .step.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .step-number {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--brand);
+    margin-bottom: 0.5rem;
+  }
+  .step-question {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    line-height: 1.4;
+    margin-bottom: 0.4rem;
+  }
+  .step-hint {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin-bottom: 1.25rem;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+
+  .opt-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-lg);
+    cursor: pointer;
+    font-size: 15px;
+    color: var(--color-text-primary);
+    text-align: left;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .opt-btn:hover {
+    border-color: var(--brand);
+    background: var(--brand-light);
+  }
+  .opt-btn.selected {
+    border-color: var(--brand);
+    background: var(--brand-light);
+    color: var(--brand-dark);
+    font-weight: 500;
+  }
+  .opt-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--color-background-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .encouragement {
+    margin-top: 1.25rem;
+    padding: 10px 14px;
+    background: var(--brand-light);
+    border-left: 3px solid var(--brand);
+    border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+    font-size: 13px;
+    color: var(--brand-dark);
+    line-height: 1.5;
+    display: none;
+  }
+
+  .nav-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 1.5rem;
+  }
+  .btn-back {
+    padding: 12px 18px;
+    background: transparent;
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md);
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+  }
+  .btn-next {
+    flex: 1;
+    padding: 14px;
+    background: var(--brand);
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: 15px;
+    font-weight: 500;
+    color: #fff;
+    cursor: pointer;
+    opacity: 0.4;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .btn-next.ready {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .result-card {
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .result-card.sim {
+    background: var(--brand-light);
+    border: 0.5px solid #9FE1CB;
+  }
+  .result-card.talvez {
+    background: var(--warn-light);
+    border: 0.5px solid #FAC775;
+  }
+  .result-card.nao {
+    background: var(--danger-light);
+    border: 0.5px solid #F7C1C1;
+  }
+
+  .result-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+  }
+  .badge-sim { background: #9FE1CB; color: var(--brand-dark); }
+  .badge-talvez { background: #FAC775; color: #633806; }
+  .badge-nao { background: #F7C1C1; color: var(--danger); }
+
+  .result-title {
+    font-size: 19px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+  }
+  .result-body {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+  }
+
+  .next-steps {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .next-steps-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.75rem;
+  }
+  .next-step-item {
+    display: flex;
+    gap: 10px;
+    padding: 8px 0;
+    border-top: 0.5px solid var(--color-border-tertiary);
+    font-size: 14px;
+    color: var(--color-text-primary);
+    line-height: 1.5;
+  }
+  .next-step-item:first-child { border-top: none; padding-top: 0; }
+  .step-num-badge {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--brand);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .btn-cta {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background: var(--brand);
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: 15px;
+    font-weight: 500;
+    color: #fff;
+    cursor: pointer;
+    text-align: center;
+  }
+  .btn-restart {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px;
+    background: transparent;
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md);
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+  }
+</style>
+
+<div id="quiz-root" role="main">
+  <h2 class="sr-only">Quiz de elegibilidade para o BPC/LOAS — descubra se você tem direito</h2>
+
+  <div class="progress-bar-track"><div class="progress-bar-fill" id="prog-fill" style="width:0%"></div></div>
+  <div class="progress-label" id="prog-label">Pergunta 1 de 5</div>
+
+  <div class="step active" data-step="0">
+    <div class="step-number">Pergunta 1 de 5</div>
+    <div class="step-question">Você tem diagnóstico de algum transtorno mental ou problema de saúde?</div>
+    <div class="step-hint">Pode ser depressão, ansiedade, esquizofrenia, deficiência física ou qualquer outra condição que limite suas atividades.</div>
+    <div class="options">
+      <button class="opt-btn" data-val="sim" onclick="choose(this,0)">
+        <span class="opt-icon">✓</span> Sim, tenho diagnóstico ou suspeito ter
+      </button>
+      <button class="opt-btn" data-val="nao" onclick="choose(this,0)">
+        <span class="opt-icon">✗</span> Não tenho nenhum diagnóstico
+      </button>
+    </div>
+    <div class="encouragement" id="enc-0">Tudo bem! Saber disso já é o primeiro passo para garantir seus direitos.</div>
+    <div class="nav-row">
+      <button class="btn-next" id="next-0" onclick="goNext(0)">Próxima →</button>
+    </div>
+  </div>
+
+  <div class="step" data-step="1">
+    <div class="step-number">Pergunta 2 de 5</div>
+    <div class="step-question">Você faz ou já fez tratamento no CAPS ou em outro serviço público de saúde?</div>
+    <div class="step-hint">CAPS é o Centro de Atenção Psicossocial, gratuito pelo SUS.</div>
+    <div class="options">
+      <button class="opt-btn" data-val="sim" onclick="choose(this,1)">
+        <span class="opt-icon">✓</span> Sim, faço ou já fiz tratamento
+      </button>
+      <button class="opt-btn" data-val="nao" onclick="choose(this,1)">
+        <span class="opt-icon">✗</span> Não, nunca fiz tratamento
+      </button>
+    </div>
+    <div class="encouragement" id="enc-1">Mesmo sem laudo ainda, é possível ter direito. Continue!</div>
+    <div class="nav-row">
+      <button class="btn-back" onclick="goBack(1)">← Voltar</button>
+      <button class="btn-next" id="next-1" onclick="goNext(1)">Próxima →</button>
+    </div>
+  </div>
+
+  <div class="step" data-step="2">
+    <div class="step-number">Pergunta 3 de 5</div>
+    <div class="step-question">Você tem um laudo médico que comprova a sua condição?</div>
+    <div class="step-hint">O laudo é um documento emitido por médico ou psicólogo que descreve seu diagnóstico.</div>
+    <div class="options">
+      <button class="opt-btn" data-val="sim" onclick="choose(this,2)">
+        <span class="opt-icon">✓</span> Sim, tenho laudo
+      </button>
+      <button class="opt-btn" data-val="nao" onclick="choose(this,2)">
+        <span class="opt-icon">✗</span> Não tenho laudo ainda
+      </button>
+    </div>
+    <div class="encouragement" id="enc-2">Ótimo! O laudo é um dos documentos mais importantes para o pedido.</div>
+    <div class="nav-row">
+      <button class="btn-back" onclick="goBack(2)">← Voltar</button>
+      <button class="btn-next" id="next-2" onclick="goNext(2)">Próxima →</button>
+    </div>
+  </div>
+
+  <div class="step" data-step="3">
+    <div class="step-number">Pergunta 4 de 5</div>
+    <div class="step-question">Qual é a renda mensal por pessoa na sua casa?</div>
+    <div class="step-hint">Some toda a renda da família (salários, pensões, etc.) e divida pelo número de pessoas que moram com você.</div>
+    <div class="options">
+      <button class="opt-btn" data-val="baixa" onclick="choose(this,3)">
+        <span class="opt-icon">💰</span> Menos de R$ 405 por pessoa
+      </button>
+      <button class="opt-btn" data-val="media" onclick="choose(this,3)">
+        <span class="opt-icon">💰</span> Entre R$ 405 e R$ 1.518 por pessoa
+      </button>
+      <button class="opt-btn" data-val="alta" onclick="choose(this,3)">
+        <span class="opt-icon">💰</span> Acima de R$ 1.518 por pessoa
+      </button>
+    </div>
+    <div class="encouragement" id="enc-3">Essa informação é fundamental para verificar o direito ao benefício.</div>
+    <div class="nav-row">
+      <button class="btn-back" onclick="goBack(3)">← Voltar</button>
+      <button class="btn-next" id="next-3" onclick="goNext(3)">Próxima →</button>
+    </div>
+  </div>
+
+  <div class="step" data-step="4">
+    <div class="step-number">Pergunta 5 de 5</div>
+    <div class="step-question">A sua condição de saúde impede ou dificulta muito o seu trabalho ou vida diária?</div>
+    <div class="step-hint">Por exemplo: dificuldade de sair de casa, de manter um emprego, de se cuidar sozinho.</div>
+    <div class="options">
+      <button class="opt-btn" data-val="sim" onclick="choose(this,4)">
+        <span class="opt-icon">✓</span> Sim, afeta bastante minha vida
+      </button>
+      <button class="opt-btn" data-val="nao" onclick="choose(this,4)">
+        <span class="opt-icon">✗</span> Não afeta tanto assim
+      </button>
+    </div>
+    <div class="encouragement" id="enc-4">Última pergunta! Já temos informações suficientes para te orientar.</div>
+    <div class="nav-row">
+      <button class="btn-back" onclick="goBack(4)">← Voltar</button>
+      <button class="btn-next" id="next-4" onclick="showResult()">Ver resultado →</button>
+    </div>
+  </div>
+
+  <div class="step" data-step="5" id="result-step">
+  </div>
+</div>
+
+<script>
+var answers = {};
+
+function choose(btn, step) {
+  var opts = btn.parentElement.querySelectorAll('.opt-btn');
+  opts.forEach(function(b){ b.classList.remove('selected'); });
+  btn.classList.add('selected');
+  answers[step] = btn.getAttribute('data-val');
+  var enc = document.getElementById('enc-' + step);
+  if (enc) enc.style.display = 'block';
+  var nxt = document.getElementById('next-' + step);
+  if (nxt) nxt.classList.add('ready');
+}
+
+function goNext(step) {
+  if (!answers[step]) return;
+  setStep(step + 1);
+}
+
+function goBack(step) {
+  setStep(step - 1);
+}
+
+function setStep(n) {
+  document.querySelectorAll('.step').forEach(function(s){ s.classList.remove('active'); });
+  document.querySelector('[data-step="' + n + '"]').classList.add('active');
+  var total = 5;
+  var pct = Math.round((n / total) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = n < total ? ('Pergunta ' + (n+1) + ' de 5') : 'Resultado';
+}
+
+function calcResult() {
+  var diag = answers[0];
+  var laudo = answers[2];
+  var renda = answers[3];
+  var impacto = answers[4];
+
+  if (diag === 'nao') return 'nao';
+  if (renda === 'alta') return 'nao';
+  if (renda === 'baixa' && laudo === 'sim' && impacto === 'sim') return 'sim';
+  if (renda === 'media' && laudo === 'sim' && impacto === 'sim') return 'talvez';
+  if (laudo === 'nao') return 'talvez';
+  return 'talvez';
+}
+
+function showResult() {
+  if (!answers[4]) return;
+  setStep(5);
+
+  var r = calcResult();
+  var html = '';
+
+  if (r === 'sim') {
+    html = '<div class="result-card sim">' +
+      '<span class="result-badge badge-sim">Possível direito identificado</span>' +
+      '<div class="result-title">Você pode ter direito ao BPC/LOAS</div>' +
+      '<div class="result-body">Com base nas suas respostas, você se enquadra no perfil de quem tem direito ao Benefício de Prestação Continuada — que paga 1 salário mínimo por mês. Isso ainda precisa ser confirmado pelo INSS, mas o caminho está aberto.</div>' +
+    '</div>' +
+    '<div class="next-steps">' +
+      '<div class="next-steps-title">O que fazer agora</div>' +
+      '<div class="next-step-item"><span class="step-num-badge">1</span>Reúna seus documentos: RG, CPF, comprovante de renda da família e o laudo médico</div>' +
+      '<div class="next-step-item"><span class="step-num-badge">2</span>Faça um cadastro no CRAS (Centro de Referência de Assistência Social) mais perto de você</div>' +
+      '<div class="next-step-item"><span class="step-num-badge">3</span>Agende sua perícia no INSS pelo telefone 135 ou no site Meu INSS</div>' +
+      '<div class="next-step-item"><span class="step-num-badge">4</span>Vá acompanhado de alguém de confiança na perícia e leve todos os documentos</div>' +
+    '</div>' +
+    '<button class="btn-cta" onclick="sendPrompt(\'Me explique com mais detalhes como dar entrada no BPC/LOAS\')">Entender o processo completo ↗</button>';
+
+  } else if (r === 'talvez') {
+    html = '<div class="result-card talvez">' +
+      '<span class="result-badge badge-talvez">Direito a verificar</span>' +
+      '<div class="result-title">Você pode ter direito, mas precisa confirmar</div>' +
+      '<div class="result-body">Algumas das suas respostas indicam que pode haver direito, mas há pontos que precisam ser avaliados com atenção — como o laudo médico ou a renda familiar. Não descarte essa possibilidade sem conversar com um especialista.</div>' +
+    '</div>' +
+    '<div class="next-steps">' +
+      '<div class="next-steps-title">Próximos passos</div>' +
+      '<div class="next-step-item"><span class="step-num-badge">1</span>Procure o CRAS da sua cidade e conte sua situação — é gratuito e sigiloso</div>' +
+      '<div class="next-step-item"><span class="step-num-badge">2</span>Se não tiver laudo, peça uma consulta no CAPS ou UBS para obter um</div>' +
+      '<div class="next-step-item"><span class="step-num-badge">3</span>Peça orientação sobre o BPC ao assistente social do CRAS</div>' +
+    '</div>' +
+    '<button class="btn-cta" onclick="sendPrompt(\'Como consigo um laudo médico para dar entrada no BPC?\')">Como conseguir um laudo médico ↗</button>';
+
+  } else {
+    html = '<div class="result-card nao">' +
+      '<span class="result-badge badge-nao">Perfil não compatível agora</span>' +
+      '<div class="result-title">Neste momento, você provavelmente não se enquadra</div>' +
+      '<div class="result-body">Com base no que você respondeu, o BPC/LOAS exige diagnóstico de deficiência ou transtorno que limite sua vida, além de baixa renda familiar. Mas existem outros benefícios que podem te ajudar.</div>' +
+    '</div>' +
+    '<div class="next-steps">' +
+      '<div class="next-steps-title">Veja outras opções</div>' +
+      '<div class="next-step-item"><span class="step-num-badge">1</span>Bolsa Família — para famílias de baixa renda com filhos</div>' +
+      '<div class="next-step-item"><span class="step-num-badge">2</span>Auxílio Doença (INSS) — se você trabalha mas ficou incapaz temporariamente</div>' +
+      '<div class="next-step-item"><span class="step-num-badge">3</span>Procure o CRAS para ver quais benefícios sociais você pode acessar</div>' +
+    '</div>' +
+    '<button class="btn-cta" onclick="sendPrompt(\'Quais outros benefícios do governo posso ter direito?\')">Ver outros benefícios ↗</button>';
+  }
+
+  html += '<button class="btn-restart" onclick="restart()">Refazer o quiz</button>';
+  document.getElementById('result-step').innerHTML = html;
+}
+
+function restart() {
+  answers = {};
+  document.querySelectorAll('.opt-btn').forEach(function(b){ b.classList.remove('selected'); });
+  document.querySelectorAll('.encouragement').forEach(function(e){ e.style.display = 'none'; });
+  document.querySelectorAll('.btn-next').forEach(function(b){ b.classList.remove('ready'); });
+  setStep(0);
+}
+</script>

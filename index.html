@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kit Digital — Dê Entrada Você Mesmo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  /* ─── TOKENS ─── */
+  :root {
+    --cream:   oklch(97% 0.014 80);
+    --cream2:  oklch(93% 0.018 78);
+    --green:   oklch(28% 0.07 155);
+    --green2:  oklch(38% 0.09 155);
+    --green-light: oklch(92% 0.04 155);
+    --amber:   oklch(68% 0.17 65);
+    --amber-light: oklch(94% 0.06 75);
+    --red:     oklch(56% 0.16 25);
+    --text:    oklch(22% 0.03 80);
+    --muted:   oklch(52% 0.02 80);
+    --white:   oklch(99% 0.005 80);
+
+    --serif: 'DM Serif Display', Georgia, serif;
+    --sans:  'DM Sans', system-ui, sans-serif;
+    --r: 14px;
+    --rr: 22px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--cream);
+    color: var(--text);
+    font-size: 18px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── LAYOUT ─── */
+  .page { max-width: 480px; margin: 0 auto; }
+
+  section { padding: 56px 24px; }
+
+  h1,h2,h3 { font-family: var(--serif); line-height: 1.2; }
+
+  /* ─── TOPBAR ─── */
+  .topbar {
+    background: var(--green);
+    color: var(--white);
+    text-align: center;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .topbar strong { color: var(--amber); }
+
+  /* ─── HERO ─── */
+  .hero {
+    background: var(--green);
+    padding: 56px 28px 52px;
+    color: var(--white);
+    text-align: center;
+  }
+  .hero .eyebrow {
+    display: inline-block;
+    background: var(--amber);
+    color: var(--green);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 999px;
+    margin-bottom: 28px;
+  }
+  .hero h1 {
+    font-size: clamp(32px, 8vw, 42px);
+    color: var(--white);
+    margin-bottom: 22px;
+    text-wrap: pretty;
+    line-height: 1.15;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: oklch(88% 0.12 75);
+  }
+  .hero .sub {
+    font-size: 18px;
+    color: oklch(82% 0.04 155);
+    margin-bottom: 36px;
+    text-wrap: pretty;
+    line-height: 1.7;
+  }
+  .hero .price-hint {
+    display: inline-flex;
+    flex-direction: column;
+    background: oklch(100% 0 0 / 0.08);
+    border: 1px solid oklch(100% 0 0 / 0.15);
+    border-radius: var(--rr);
+    padding: 20px 36px;
+    margin-bottom: 32px;
+    gap: 4px;
+  }
+  .hero .price-hint span:first-child {
+    font-size: 14px; color: oklch(75% 0.04 155); letter-spacing: 0.04em;
+  }
+  .hero .price-hint strong {
+    font-size: 52px; font-family: var(--serif); color: var(--amber); line-height: 1;
+  }
+  .hero .price-hint span:last-child {
+    font-size: 14px; color: oklch(65% 0.04 155);
+  }
+
+  /* ─── CTA BUTTON ─── */
+  .btn-cta {
+    display: block;
+    width: 100%;
+    background: var(--amber);
+    color: var(--green);
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 19px;
+    padding: 22px 24px;
+    border: none;
+    border-radius: var(--r);
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 24px oklch(68% 0.17 65 / 0.35);
+    line-height: 1.3;
+  }
+  .btn-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 32px oklch(68% 0.17 65 / 0.45); }
+  .btn-cta:active { transform: translateY(0); }
+  .btn-cta small { display: block; font-size: 14px; font-weight: 400; opacity: 0.75; margin-top: 5px; }
+
+  .btn-cta-outline {
+    display: block;
+    width: 100%;
+    background: transparent;
+    color: var(--white);
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 17px;
+    padding: 18px 24px;
+    border: 2px solid oklch(100% 0 0 / 0.3);
+    border-radius: var(--r);
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: border-color 0.15s, background 0.15s;
+    margin-top: 12px;
+  }
+  .btn-cta-outline:hover { border-color: var(--amber); color: var(--amber); }
+
+  /* ─── QUALIFY ─── */
+  .qualify { background: var(--white); }
+  .qualify h2 { font-size: 30px; margin-bottom: 10px; }
+  .qualify .intro { color: var(--muted); margin-bottom: 32px; font-size: 17px; }
+
+  .check-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+  .check-list li {
+    display: flex; align-items: flex-start; gap: 14px;
+    background: var(--cream); border-radius: var(--r);
+    padding: 18px 18px; font-size: 17px;
+    border: 1px solid var(--cream2);
+    line-height: 1.6;
+  }
+  .check-list li .icon {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--green-light); color: var(--green);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0; margin-top: 2px;
+    font-weight: 700;
+  }
+  .qualify .result-box {
+    margin-top: 28px;
+    background: var(--green-light);
+    border: 2px solid oklch(70% 0.09 155);
+    border-radius: var(--rr);
+    padding: 26px 22px;
+    text-align: center;
+  }
+  .qualify .result-box p { font-size: 17px; color: var(--green); line-height: 1.65; }
+  .qualify .result-box strong { font-size: 20px; display: block; margin-bottom: 8px; }
+
+  /* ─── FEAR SECTION ─── */
+  .fear { background: var(--cream2); }
+  .fear h2 { font-size: 30px; margin-bottom: 24px; text-wrap: pretty; }
+
+  .fear-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+  .fear-list li {
+    display: flex; align-items: flex-start; gap: 12px;
+    font-size: 17px; padding: 14px 16px;
+    background: var(--white); border-radius: var(--r);
+    border: 1px solid var(--cream2);
+    line-height: 1.6;
+  }
+  .fear-list li::before {
+    content: '✗';
+    color: var(--red);
+    font-weight: 700;
+    font-size: 16px;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+
+  .fear .bridge {
+    margin-top: 28px;
+    padding: 24px 22px;
+    background: var(--white);
+    border-radius: var(--rr);
+    border-left: 5px solid var(--amber);
+  }
+  .fear .bridge p { font-size: 17px; color: var(--text); line-height: 1.75; }
+  .fear .bridge strong { color: var(--green); }
+
+  /* ─── WHAT'S INSIDE ─── */
+  .inside { background: var(--white); }
+  .inside .tag {
+    display: inline-block;
+    background: var(--amber-light);
+    color: oklch(45% 0.12 65);
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 5px 12px;
+    border-radius: 999px; margin-bottom: 16px;
+  }
+  .inside h2 { font-size: 30px; margin-bottom: 10px; }
+  .inside .sub { font-size: 17px; color: var(--muted); margin-bottom: 32px; line-height: 1.65; }
+
+  .module-list { display: flex; flex-direction: column; gap: 16px; }
+  .module {
+    display: flex; gap: 18px; align-items: flex-start;
+    padding: 22px 18px; background: var(--cream);
+    border-radius: var(--r); border: 1px solid var(--cream2);
+    transition: border-color 0.2s;
+  }
+  .module:hover { border-color: oklch(75% 0.07 155); }
+  .module .num {
+    width: 42px; height: 42px; border-radius: 12px;
+    background: var(--green); color: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--serif); font-size: 20px; flex-shrink: 0;
+  }
+  .module h3 { font-family: var(--sans); font-weight: 700; font-size: 17px; margin-bottom: 5px; }
+  .module p { font-size: 15px; color: var(--muted); line-height: 1.65; }
+
+  /* ─── PRICE ─── */
+  .price-section {
+    background: var(--green);
+    color: var(--white);
+    text-align: center;
+    padding: 52px 28px;
+  }
+  .price-section h2 {
+    font-size: 32px; color: var(--white);
+    margin-bottom: 14px; text-wrap: pretty;
+  }
+  .price-section .comparison {
+    display: flex; gap: 12px; margin: 28px 0; align-items: stretch;
+  }
+  .price-card {
+    flex: 1; border-radius: var(--rr); padding: 20px 16px;
+    display: flex; flex-direction: column; gap: 6px;
+    text-align: center;
+  }
+  .price-card.bad {
+    background: oklch(100% 0 0 / 0.07);
+    border: 1px solid oklch(100% 0 0 / 0.12);
+  }
+  .price-card.good {
+    background: var(--amber);
+    border: none;
+  }
+  .price-card .label { font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.7; }
+  .price-card .val { font-family: var(--serif); font-size: 34px; line-height: 1; }
+  .price-card.good .val { color: var(--green); }
+  .price-card.good .label { color: var(--green); opacity: 0.7; }
+  .price-card .desc { font-size: 13px; opacity: 0.65; }
+  .vs { display: flex; align-items: center; color: oklch(65% 0.04 155); font-size: 13px; font-weight: 600; padding: 0 4px; }
+
+  .price-section .guarantee {
+    display: flex; align-items: center; gap: 10px;
+    background: oklch(100% 0 0 / 0.08);
+    border: 1px solid oklch(100% 0 0 / 0.15);
+    border-radius: var(--r);
+    padding: 14px 16px; margin: 24px 0;
+    text-align: left;
+  }
+  .price-section .guarantee .g-icon { font-size: 28px; flex-shrink: 0; }
+  .price-section .guarantee p { font-size: 15px; color: oklch(82% 0.04 155); line-height: 1.6; }
+  .price-section .guarantee strong { color: var(--white); font-size: 17px; display: block; }
+
+  /* ─── TESTIMONIALS ─── */
+  .testimonials { background: var(--cream2); padding: 48px 24px; }
+  .testimonials h2 { font-size: 28px; margin-bottom: 28px; text-align: center; }
+
+  .testi-list { display: flex; flex-direction: column; gap: 14px; }
+  .testi {
+    background: var(--white);
+    border-radius: var(--rr);
+    padding: 20px;
+    border: 1px solid var(--cream2);
+  }
+  .testi .stars { color: var(--amber); font-size: 14px; margin-bottom: 8px; letter-spacing: 2px; }
+  .testi blockquote {
+    font-size: 17px; line-height: 1.75; color: var(--text);
+    font-style: italic; margin-bottom: 14px;
+  }
+  .testi .author {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .testi .avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--green-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 700; color: var(--green); flex-shrink: 0;
+  }
+  .testi .author-info strong { font-size: 15px; font-weight: 600; display: block; }
+  .testi .author-info span { font-size: 13px; color: var(--muted); }
+
+  /* ─── FAQ ─── */
+  .faq { background: var(--white); }
+  .faq h2 { font-size: 28px; margin-bottom: 28px; }
+  .faq-list { display: flex; flex-direction: column; gap: 2px; }
+  .faq-item {}
+  .faq-q {
+    width: 100%; background: none; border: none;
+    text-align: left; padding: 20px 0;
+    font-family: var(--sans); font-size: 17px; font-weight: 600;
+    color: var(--text); cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    border-bottom: 1px solid var(--cream2);
+  }
+  .faq-q .arr { font-size: 18px; transition: transform 0.25s; color: var(--muted); flex-shrink: 0; }
+  .faq-q.open .arr { transform: rotate(180deg); }
+  .faq-a {
+    font-size: 16px; color: var(--muted); line-height: 1.8;
+    max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.25s;
+    padding: 0;
+  }
+  .faq-a.open { max-height: 300px; padding: 14px 0 20px; }
+
+  /* ─── URGENCY ─── */
+  .urgency {
+    background: oklch(56% 0.13 25 / 0.07);
+    border: 1.5px solid oklch(56% 0.13 25 / 0.2);
+    border-radius: var(--rr);
+    padding: 20px; margin: 0 24px 24px;
+    text-align: center;
+  }
+  .urgency p { font-size: 16px; color: var(--red); font-weight: 600; }
+  .urgency small { font-size: 14px; color: var(--muted); }
+
+  /* ─── FINAL CTA ─── */
+  .final-cta {
+    background: var(--green);
+    padding: 52px 28px;
+    text-align: center;
+    color: var(--white);
+  }
+  .final-cta h2 { font-size: 34px; color: var(--white); margin-bottom: 14px; line-height: 1.2; }
+  .final-cta p { color: oklch(80% 0.04 155); font-size: 18px; margin-bottom: 32px; line-height: 1.7; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--cream2);
+    padding: 28px 24px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    border-top: 1px solid var(--cream2);
+  }
+  footer a { color: var(--muted); text-decoration: underline; }
+
+  /* ─── TWEAKS PANEL ─── */
+  #tweaks-panel {
+    display: none;
+    position: fixed;
+    bottom: 24px;
+    right: 20px;
+    width: 260px;
+    background: var(--white);
+    border-radius: 18px;
+    box-shadow: 0 8px 40px oklch(0% 0 0 / 0.18);
+    z-index: 9999;
+    padding: 20px;
+    border: 1px solid var(--cream2);
+  }
+  #tweaks-panel.visible { display: block; }
+  #tweaks-panel h4 {
+    font-family: var(--sans); font-size: 13px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 16px;
+  }
+  .tweak-row { margin-bottom: 14px; }
+  .tweak-row label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .tweak-row select, .tweak-row input[type="range"] {
+    width: 100%; border: 1px solid var(--cream2);
+    border-radius: 8px; padding: 7px 10px;
+    font-family: var(--sans); font-size: 13px;
+    background: var(--cream); color: var(--text);
+    appearance: none;
+  }
+  .tweak-row input[type="color"] {
+    width: 40px; height: 32px; border: 1px solid var(--cream2);
+    border-radius: 8px; cursor: pointer; padding: 2px;
+  }
+  .tweak-row .color-row { display: flex; align-items: center; gap: 10px; }
+  .tweak-row .color-val { font-size: 12px; color: var(--muted); }
+
+  /* ─── SCROLL ANIM ─── */
+  .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.55s ease, transform 0.55s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+
+  @media (min-width: 520px) {
+    body { background: oklch(88% 0.01 80); }
+    .page {
+      margin: 40px auto;
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 24px 80px oklch(22% 0.03 80 / 0.18);
+    }
+    footer { border-radius: 0 0 28px 28px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    Você acabou de descobrir que tem o perfil. <strong>Agora é hora de pedir do jeito certo.</strong>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <span class="eyebrow">Próximo passo — Benefício do Governo</span>
+    <h1>O quiz mostrou que você tem o perfil. <em>Não perca esse direito</em> por errar na hora de pedir.</h1>
+    <p class="sub">Agora que você sabe que provavelmente tem direito, a única coisa que pode te impedir é não saber como pedir certinho — <strong>sem advogado, sem complicação</strong>.</p>
+
+    <div class="price-hint">
+      <span>Benefício mensal</span>
+      <strong>R$ 1.518</strong>
+      <span>todo mês, direto na sua conta — você tem o perfil</span>
+    </div>
+
+    <a href="#comprar" class="btn-cta">
+      Quero o Kit Completo por R$ 27
+      <small>Acesso imediato • Pago 1 vez só</small>
+    </a>
+    <a href="#o-que-e" class="btn-cta-outline">O que eu preciso fazer agora ↓</a>
+  </section>
+
+  <!-- QUALIFY -->
+  <section class="qualify" id="o-que-e">
+    <div class="reveal">
+      <h2>O quiz confirmou. Agora só falta uma coisa.</h2>
+      <p class="intro">Você respondeu as perguntas e o resultado foi claro. Você tem o perfil porque:</p>
+
+      <ul class="check-list">
+        <li>
+          <span class="icon">✓</span>
+          <span>Você tem um <strong>problema de saúde mental</strong> — depressão, ansiedade ou outro</span>
+        </li>
+        <li>
+          <span class="icon">✓</span>
+          <span>A <strong>renda da sua família é baixa</strong> — menos de R$ 405 por pessoa na casa</span>
+        </li>
+        <li>
+          <span class="icon">✓</span>
+          <span>O problema de saúde <strong>atrapalha sua vida e seu trabalho</strong></span>
+        </li>
+        <li>
+          <span class="icon">✓</span>
+          <span>Você <strong>ainda não recebe</strong> esse dinheiro todo mês</span>
+        </li>
+      </ul>
+
+      <div class="result-box">
+        <strong>O direito existe. O que falta é pedir do jeito certo.</strong>
+        <p>A maioria das pessoas que tem o perfil <em>é negada por erro no pedido</em> — não porque não tem direito. Esse kit existe pra isso não acontecer com você.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEAR -->
+  <section class="fear">
+    <div class="reveal">
+      <h2>Saber que tem direito é só metade do caminho</h2>
+
+      <ul class="fear-list">
+        <li>"Não sei quais papéis juntar e tenho medo de esquecer algum"</li>
+        <li>"Tenho medo de falar errado na consulta com o médico do governo"</li>
+        <li>"O site do governo parece complicado demais pra mim"</li>
+        <li>"Já tentei antes e foi negado — não quero errar de novo"</li>
+        <li>"Não tenho dinheiro pra pagar advogado agora"</li>
+      </ul>
+
+      <div class="bridge">
+        <p><strong>Você já fez a parte mais difícil: descobriu que tem o perfil.</strong> O que falta agora é só não errar nos detalhes do pedido. E é exatamente pra isso que esse kit foi feito.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT'S INSIDE -->
+  <section class="inside" id="kit">
+    <div class="reveal">
+      <span class="tag">Seu próximo passo</span>
+      <h2>Kit Digital "Dê Entrada Você Mesmo"</h2>
+      <p class="sub">O quiz mostrou que você tem o perfil. Esse kit te mostra como pedir — do zero até o dinheiro cair na conta.</p>
+
+      <div class="module-list">
+        <div class="module">
+          <div class="num">1</div>
+          <div>
+            <h3>Lista completa de papéis e documentos</h3>
+            <p>A lista de tudo que você precisa separar antes de pedir. Cada item explicado em linguagem simples: o que é, pra que serve e onde conseguir.</p>
+          </div>
+        </div>
+        <div class="module">
+          <div class="num">2</div>
+          <div>
+            <h3>Formulário de pedido já pronto para preencher</h3>
+            <p>O papel principal que você entrega ao governo já está montado. É só colocar seus dados e assinar. Sem risco de errar ou esquecer nada.</p>
+          </div>
+        </div>
+        <div class="module">
+          <div class="num">3</div>
+          <div>
+            <h3>Vídeo mostrando como pedir pelo celular</h3>
+            <p>Uma gravação mostrando cada tela, cada clique, passo a passo. Se você usa WhatsApp, consegue fazer. É mais simples do que parece.</p>
+          </div>
+        </div>
+        <div class="module">
+          <div class="num">4</div>
+          <div>
+            <h3>Como se sair bem na consulta com o médico do governo</h3>
+            <p>O que falar, o que levar, como explicar sua situação de saúde com suas próprias palavras. Esse é o momento mais importante — e esse guia te prepara pra ele.</p>
+          </div>
+        </div>
+        <div class="module">
+          <div class="num">5</div>
+          <div>
+            <h3>As perguntas que o médico vai te fazer — e o que responder</h3>
+            <p>As perguntas que o médico avaliador costuma fazer durante a consulta — com exemplos de como responder de forma clara e honesta.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICE -->
+  <section class="price-section" id="comprar">
+    <div class="reveal">
+      <h2>Você já sabe que tem direito. E agora?</h2>
+      <p style="color: oklch(80% 0.04 155); font-size: 15px; margin-bottom: 4px;">Cada mês que passa sem pedir é <strong style="color:var(--amber)">R$ 1.518 que fica fora do seu bolso.</strong></p>
+
+      <div class="comparison">
+        <div class="price-card bad">
+          <span class="label">Benefício mensal</span>
+          <span class="val">R$ 1.518</span>
+          <span class="desc">que você recebe todo mês</span>
+        </div>
+        <span class="vs">vs</span>
+        <div class="price-card good">
+          <span class="label">Esse kit</span>
+          <span class="val" style="font-size:34px">R$ 27</span>
+          <span class="desc" style="color:var(--green); opacity:0.7">pago uma única vez</span>
+        </div>
+      </div>
+
+      <p style="font-size:15px; color: oklch(78% 0.04 155); margin-bottom: 24px;">Você já fez o quiz. Já sabe que tem o perfil. R$ 27 é o único passo que separa você de receber R$ 1.518 todo mês.</p>
+
+      <div class="guarantee">
+        <span class="g-icon">🛡️</span>
+        <div>
+          <strong>Garantia de 7 dias</strong>
+          <p>Se você achar que o kit não vale, devolvemos o dinheiro. Sem perguntas, sem burocracia.</p>
+        </div>
+      </div>
+
+      <a href="https://wa.me/5500000000000" class="btn-cta" id="cta-main">
+        Quero o Kit por R$ 27 agora
+        <small>Acesso imediato via WhatsApp · Pix, cartão ou boleto</small>
+      </a>
+
+      <p style="margin-top: 16px; font-size: 13px; color: oklch(62% 0.04 155);">🔒 Pagamento 100% seguro · Acesso em menos de 5 minutos</p>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials">
+    <div class="reveal">
+      <h2>Quem já usou o kit</h2>
+      <div class="testi-list">
+        <div class="testi">
+          <div class="stars">★★★★★</div>
+          <blockquote>"Eu tinha tentado sozinha antes e foi negado. Com a lista de documentos e o guia da consulta médica, na segunda vez fui aprovada. Faz 4 meses que recebo o dinheiro todo mês."</blockquote>
+          <div class="author">
+            <div class="avatar">M</div>
+            <div class="author-info">
+              <strong>Marcilene S.</strong>
+              <span>Problema de saúde mental · Aprovada em 2024</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="testi">
+          <div class="stars">★★★★★</div>
+          <blockquote>"Minha mãe tem depressão grave e eu não sabia que ela podia receber esse dinheiro. Segui o vídeo no celular e fiz tudo. Em 3 meses foi aprovado."</blockquote>
+          <div class="author">
+            <div class="avatar">R</div>
+            <div class="author-info">
+              <strong>Roberta L.</strong>
+              <span>Pediu pelo celular pelo kit · São Paulo</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="testi">
+          <div class="stars">★★★★★</div>
+          <blockquote>"O guia sobre a consulta com o médico do governo foi o que mais me ajudou. Eu ia sem saber o que falar e ficava nervosa. Li o guia na noite anterior e me senti preparada."</blockquote>
+          <div class="author">
+            <div class="avatar">C</div>
+            <div class="author-info">
+              <strong>Cleide M.</strong>
+              <span>Ansiedade severa · Recife</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq">
+    <div class="reveal">
+      <h2>Perguntas frequentes</h2>
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            Preciso de advogado para pedir? <span class="arr">↓</span>
+          </button>
+          <div class="faq-a">
+            Não. Esse benefício é um direito garantido pela lei e você pode pedir diretamente — pelo celular, pelo telefone 135 ou pessoalmente num posto do governo. Esse kit te ensina a fazer tudo isso sozinha, sem pagar ninguém.
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            E se eu já tentei e foi negado antes? <span class="arr">↓</span>
+          </button>
+          <div class="faq-a">
+            Negativas acontecem muito quando falta algum papel ou quando a pessoa não sabe como se apresentar na consulta com o médico do governo. Com o kit, você vai entender o que pode ter faltado e como tentar de novo do jeito certo.
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            Precisa ter papel do médico obrigatoriamente? <span class="arr">↓</span>
+          </button>
+          <div class="faq-a">
+            O papel do médico (laudo) ajuda muito, mas não é o único documento que conta. O kit explica o que é essencial e como conseguir essa documentação de graça no postinho de saúde ou no centro de saúde mental da sua cidade.
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            Quanto tempo demora até ser aprovada? <span class="arr">↓</span>
+          </button>
+          <div class="faq-a">
+            O governo tem até 45 dias para dar uma resposta, mas pode demorar um pouco mais. O que faz mais diferença é fazer o pedido certinho desde o começo — quem entrega tudo certo na primeira vez tem muito mais chance de ser aprovado rápido.
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            Posso pedir para uma pessoa da minha família? <span class="arr">↓</span>
+          </button>
+          <div class="faq-a">
+            Sim. Se você cuida de alguém com problema de saúde mental — um filho, uma mãe, um irmão — pode usar o kit para ajudar essa pessoa a pedir. O passo a passo é o mesmo.
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            Como recebo o kit depois do pagamento? <span class="arr">↓</span>
+          </button>
+          <div class="faq-a">
+            Assim que o pagamento for confirmado — em menos de 5 minutos — você recebe o acesso direto pelo WhatsApp. Sem app para instalar, sem complicação.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- URGENCY -->
+  <div class="urgency reveal">
+    <p>⚠️ Cada mês sem pedir = R$ 1.518 a menos no seu bolso</p>
+    <small>Não deixe para amanhã o que pode mudar sua vida hoje.</small>
+  </div>
+
+  <!-- FINAL CTA -->
+  <section class="final-cta">
+    <div class="reveal">
+      <h2>Você já sabe que tem direito. Não deixa passar.</h2>
+      <p>Por R$ 27 você recebe tudo que precisa pra pedir certo — sem advogado, sem complicação, sem medo de errar.</p>
+      <a href="https://wa.me/5500000000000" class="btn-cta">
+        Quero o Kit Agora — R$ 27
+        <small>Garantia de 7 dias · Acesso imediato</small>
+      </a>
+      <p style="margin-top: 16px; font-size: 13px; color: oklch(62% 0.04 155);">Tem dúvida? Fale com a gente no WhatsApp antes de comprar.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p style="margin-bottom: 8px;">Kit Digital "Dê Entrada Você Mesmo" · Acesso imediato pelo celular</p>
+    <p><a href="#">Política de Privacidade</a> · <a href="#">Termos de Uso</a> · <a href="#">Contato</a></p>
+    <p style="margin-top: 12px; font-size: 11px;">Este produto é educativo e informativo. Não substitui assessoria jurídica especializada.</p>
+  </footer>
+
+</div><!-- /page -->
+
+<!-- TWEAKS PANEL -->
+<div id="tweaks-panel">
+  <h4>Tweaks</h4>
+
+  <div class="tweak-row">
+    <label>Preço do Kit</label>
+    <select id="tw-price" onchange="applyTweaks()">
+      <option value="27">R$ 27</option>
+      <option value="37">R$ 37</option>
+      <option value="47">R$ 47</option>
+    </select>
+  </div>
+
+  <div class="tweak-row">
+    <label>Tom do CTA principal</label>
+    <select id="tw-cta" onchange="applyTweaks()">
+      <option value="a">Quero o Kit por R$ 27 agora</option>
+      <option value="b">Começar meu pedido hoje</option>
+      <option value="c">Sim, quero saber meu direito</option>
+    </select>
+  </div>
+
+  <div class="tweak-row">
+    <label>Cor de destaque</label>
+    <div class="color-row">
+      <input type="color" id="tw-accent" value="#d4881a" onchange="applyTweaks()">
+      <span class="color-val" id="tw-accent-val">#d4881a</span>
+    </div>
+  </div>
+
+  <div class="tweak-row">
+    <label>Topbar social proof</label>
+    <select id="tw-topbar" onchange="applyTweaks()">
+      <option value="a">Mais de 2.400 famílias já conseguiram</option>
+      <option value="b">Aprovado por assistentes sociais do CAPS</option>
+      <option value="c">Já ajudou pessoas em todo o Brasil</option>
+    </select>
+  </div>
+</div>
+
+<script>
+// ─── FAQ ───
+function toggleFaq(btn) {
+  const answer = btn.nextElementSibling;
+  const isOpen = answer.classList.contains('open');
+  document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
+  document.querySelectorAll('.faq-q').forEach(q => q.classList.remove('open'));
+  if (!isOpen) { answer.classList.add('open'); btn.classList.add('open'); }
+}
+
+// ─── REVEAL ON SCROLL ───
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ─── TWEAKS ───
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "price": "27",
+  "cta": "a",
+  "accent": "#d4881a",
+  "topbar": "a"
+}/*EDITMODE-END*/;
+
+const ctaCopy = {
+  a: ['Quero o Kit por R$ {p} agora', 'Acesso imediato via WhatsApp · Pix, cartão ou boleto'],
+  b: ['Começar meu pedido hoje — R$ {p}', 'Acesso imediato · Garantia de 7 dias'],
+  c: ['Sim, quero saber meu direito — R$ {p}', 'Pago uma vez só · Resultado em minutos']
+};
+const topbarCopy = {
+  a: 'Você acabou de descobrir que tem o perfil. <strong>Agora é hora de pedir do jeito certo.</strong>',
+  b: 'Aprovado e recomendado por <strong>assistentes sociais e agentes de saúde</strong>',
+  c: 'Já ajudou pessoas em <strong>todos os estados do Brasil</strong>'
+};
+
+function applyTweaks() {
+  const price = document.getElementById('tw-price').value;
+  const cta   = document.getElementById('tw-cta').value;
+  const accent= document.getElementById('tw-accent').value;
+  const topbar= document.getElementById('tw-topbar').value;
+
+  document.getElementById('tw-accent-val').textContent = accent;
+  document.documentElement.style.setProperty('--amber', accent);
+
+  const [main, sub] = ctaCopy[cta];
+  document.querySelectorAll('.btn-cta').forEach(btn => {
+    const small = btn.querySelector('small');
+    btn.childNodes[0].textContent = main.replace('{p}', price) + ' ';
+    if (small) small.textContent = sub;
+  });
+
+  document.querySelector('.topbar').innerHTML = topbarCopy[topbar];
+
+  document.querySelectorAll('.price-card.good .val').forEach(el => {
+    el.textContent = 'R$ ' + price;
+  });
+
+  window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { price, cta, accent, topbar } }, '*');
+}
+
+function loadTweaks(vals) {
+  document.getElementById('tw-price').value  = vals.price  || TWEAK_DEFAULTS.price;
+  document.getElementById('tw-cta').value    = vals.cta    || TWEAK_DEFAULTS.cta;
+  document.getElementById('tw-accent').value = vals.accent || TWEAK_DEFAULTS.accent;
+  document.getElementById('tw-topbar').value = vals.topbar || TWEAK_DEFAULTS.topbar;
+  applyTweaks();
+}
+
+window.addEventListener('message', e => {
+  if (e.data?.type === '__activate_edit_mode') {
+    document.getElementById('tweaks-panel').classList.add('visible');
+  }
+  if (e.data?.type === '__deactivate_edit_mode') {
+    document.getElementById('tweaks-panel').classList.remove('visible');
+  }
+});
+window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+loadTweaks(TWEAK_DEFAULTS);
+</script>
+</body>
+</html>
